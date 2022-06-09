@@ -36,13 +36,22 @@ macro_rules! impl_file {
             }
         }
 
-        impl std::io::Seek for File {
+        impl std::io::Seek for $enum_name {
             fn seek(&mut self, pos: std::io::SeekFrom) -> std::io::Result<u64> {
                 match self {
                     $(
                         $(#[$($var_meta)+])*
                         $enum_name::$var_name(ref mut file) => file.seek(pos),
                     )*
+                }
+            }
+        }
+
+        impl std::fmt::Debug for $enum_name {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                match self {
+                    $enum_name::Local(file) => write!(f, "{:?}", file),
+                    _ => write!(f, "todo"),
                 }
             }
         }
@@ -95,4 +104,3 @@ macro_rules! store_tuples {
         store_tuples!($($tail,)+);
     };
 }
-
